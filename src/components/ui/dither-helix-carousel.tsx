@@ -560,7 +560,9 @@ export function DitherHelixCarousel({
     rise,
     cardRatio,
   });
-  settings.current = { accent, cell, focusBand, twist, rise, cardRatio };
+  React.useLayoutEffect(() => {
+    settings.current = { accent, cell, focusBand, twist, rise, cardRatio };
+  });
   /** Populated by the render loop so keyboard input drives the same rotation the
       wheel does. */
   const step = React.useRef<(by: number) => void>(() => {});
@@ -731,8 +733,13 @@ export function DitherHelixCarousel({
     // --- state ------------------------------------------------------------
     let width = 0;
     let height = 0;
-    let progress = 0;
-    let goal = 0;
+    // The column is finite: it runs from the first card to the last and then
+    // hands the wheel back to the page, instead of spinning forever.
+    const FRONT = Math.floor(count / 2);
+    const MIN = -FRONT;
+    const MAX = count - 1 - FRONT;
+    let progress = MIN;
+    let goal = MIN;
     let smoothed = 0; // velocity feeding the bend
     let lastInput = 0;
     let snapped = true;
@@ -759,7 +766,6 @@ export function DitherHelixCarousel({
 
     const focal = 1 / Math.tan((FOV * Math.PI) / 360);
     /** The slot that faces the camera. Everything is measured from here. */
-    const FRONT = Math.floor(count / 2);
 
     const resize = () => {
       const w = canvas.clientWidth;
@@ -775,6 +781,20 @@ export function DitherHelixCarousel({
     resize();
     const observer = new ResizeObserver(resize);
     observer.observe(canvas);
+
+    // Pause hors écran et onglet caché : la boucle ne se replanifie plus,
+    // elle reprend dès que le canvas redevient visible.
+    let onScreen = true;
+    const resume = () => {
+      if (!frame && onScreen && !document.hidden)
+        frame = requestAnimationFrame(draw);
+    };
+    const visibility = new IntersectionObserver(([entry]) => {
+      onScreen = entry.isIntersecting;
+      resume();
+    });
+    visibility.observe(canvas);
+    document.addEventListener("visibilitychange", resume);
 
     /** Screen placement for a given index in CSS pixels, together with its
         distance from the camera. The layout is columnar, so this is sufficient
@@ -826,16 +846,32 @@ export function DitherHelixCarousel({
 
     // --- input ------------------------------------------------------------
     const onWheel = (event: WheelEvent) => {
+      // At either end, let the page scroll on to the next section.
+      const atEnd =
+        !tween &&
+        ((event.deltaY > 0 && goal >= MAX - 0.001) ||
+          (event.deltaY < 0 && goal <= MIN + 0.001));
+      if (atEnd) return;
       event.preventDefault();
       tween = null;
-      goal += event.deltaY * WHEEL;
+      // One gesture can only carry the column about a card, however hard the
+      // trackpad's inertia keeps firing.
+      goal = clamp(
+        goal + clamp(event.deltaY * WHEEL, -0.35, 0.35),
+        Math.max(MIN, progress - 1.5),
+        Math.min(MAX, progress + 1.5),
+      );
       lastInput = performance.now();
       snapped = false;
     };
     canvas.addEventListener("wheel", onWheel, { passive: false });
 
     step.current = (by: number) => {
-      tween = { from: goal, to: Math.round(goal) + by, at: performance.now() };
+      tween = {
+        from: goal,
+        to: clamp(Math.round(goal) + by, MIN, MAX),
+        at: performance.now(),
+      };
       lastInput = performance.now();
       snapped = true;
     };
@@ -859,20 +895,19 @@ export function DitherHelixCarousel({
         const travel = dragFrom - event.clientY;
         dragTravel += Math.abs(travel);
         dragFrom = event.clientY;
-        goal += travel * DRAG;
+        goal = clamp(goal + travel * DRAG, MIN, MAX);
         lastInput = performance.now();
         snapped = false;
       }
     };
-    const onUp = (event: PointerEvent) => {
+    const onUp = () => {
       const wasClick = dragFrom !== null && dragTravel < CLICK_SLOP;
       dragFrom = null;
       if (!wasClick) return;
       const hit = pick(pointerX, pointerY);
       // Advance to the facing slot along whichever direction is shorter.
       if (hit >= 0) {
-        const want = (((hit - FRONT) % count) + count) % count;
-        const to = want + Math.round((goal - want) / count) * count;
+        const to = clamp(hit - FRONT, MIN, MAX);
         tween = { from: goal, to, at: performance.now() };
         snapped = true;
       }
@@ -896,6 +931,10 @@ export function DitherHelixCarousel({
     };
 
     const draw = (now: number) => {
+      if (!onScreen || document.hidden) {
+        frame = 0;
+        return;
+      }
       frame = requestAnimationFrame(draw);
       if (!width || !height) return;
       const {
@@ -946,6 +985,7 @@ export function DitherHelixCarousel({
         snapped = true;
       }
 
+      goal = clamp(goal, MIN, MAX);
       const before = progress;
       if (!arriving) {
         progress +=
@@ -1067,6 +1107,8 @@ export function DitherHelixCarousel({
     return () => {
       cancelAnimationFrame(frame);
       observer.disconnect();
+      visibility.disconnect();
+      document.removeEventListener("visibilitychange", resume);
       canvas.removeEventListener("wheel", onWheel);
       canvas.removeEventListener("pointerdown", onDown);
       canvas.removeEventListener("pointermove", onMove);
@@ -1141,7 +1183,7 @@ export function DitherHelixCarousel({
         role="listbox"
         aria-label={brand ?? "Gallery"}
         aria-activedescendant={`dither-helix-${active}`}
-        className="bg-background text-foreground focus-visible:outline-foreground absolute inset-0 h-full w-full cursor-grab touch-pan-x outline-none focus-visible:outline-2 focus-visible:-outline-offset-4 active:cursor-grabbing"
+        className="bg-background text-foreground focus-visible:outline-ring absolute inset-0 h-full w-full cursor-grab touch-pan-x outline-none focus-visible:outline-2 focus-visible:outline-solid focus-visible:-outline-offset-4 active:cursor-grabbing"
         onKeyDown={(event) => {
           if (event.key === "ArrowDown") step.current(1);
           else if (event.key === "ArrowUp") step.current(-1);
