@@ -29,7 +29,7 @@ export function SeriesCard({
           className={cn(
             "relative overflow-hidden rounded-sm bg-muted shadow-print transition-[translate,box-shadow] duration-(--duration-ui) ease-out",
             "group-hover:-translate-y-0.5 group-hover:shadow-lift motion-reduce:group-hover:translate-y-0",
-            tall ? "aspect-4/5" : "aspect-3/2",
+            tall ? "aspect-4/5 sm:aspect-3/2 lg:aspect-4/5" : "aspect-3/2",
           )}
         >
           <Image

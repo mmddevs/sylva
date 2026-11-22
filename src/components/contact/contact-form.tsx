@@ -162,7 +162,7 @@ export function ContactForm() {
             onSubmit={onSubmit}
             noValidate
             aria-busy={pending}
-            className="grid gap-6 rounded-lg border border-border bg-card p-6 sm:p-8"
+            className="grid gap-6 rounded-lg border border-border bg-card p-5 sm:p-8"
           >
             <div className="grid gap-6 sm:grid-cols-2">
               <Field id="name" label={F.name.label} error={errors.name}>
@@ -249,7 +249,7 @@ export function ContactForm() {
             <div className="flex flex-col-reverse items-stretch gap-4 sm:flex-row sm:items-center sm:justify-between">
               <p className="text-sm text-muted-foreground">
                 {CONTACT.emailLabel}{" "}
-                <a href={`mailto:${CONTACT.email}`} className="text-foreground underline decoration-border underline-offset-4 transition-colors duration-(--duration-ui) hover:decoration-foreground">
+                <a href={`mailto:${CONTACT.email}`} className="-my-3 inline-block py-3 text-foreground underline decoration-border underline-offset-4 transition-colors duration-(--duration-ui) hover:decoration-foreground">
                   {CONTACT.email}
                 </a>
               </p>

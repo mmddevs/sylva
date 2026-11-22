@@ -22,9 +22,10 @@ export function SiteFooter() {
           monoFamily={tokens.mono}
           fontWeight={800}
           backToTopLabel={FOOTER.backToTop}
+          className="max-sm:h-150!"
         />
       ) : (
-        <div aria-hidden className="h-140 bg-background" />
+        <div aria-hidden className="h-140 bg-background max-sm:h-150" />
       )}
     </div>
   );

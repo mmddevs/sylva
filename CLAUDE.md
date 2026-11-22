@@ -30,6 +30,15 @@ Langue du site et des textes : **français** (espaces insécables avant ? ! : ; 
 - View transitions React : morph `series-<slug>` (grille → détail, `share="morph"`), `page-enter`/`page-exit`. Garder `data-scroll-behavior="smooth"` sur `<html>`.
 - `transform`/`opacity` (+ `clip-path` pour dévoiler, hauteur pour l'accordéon). Entrées `ease-out`. UI < 300 ms. Rien au clavier ni sur la nav. `motion-reduce:` partout. En Tailwind v4, `translate-*`/`scale-*`/`rotate-*` sont des propriétés à part : écrire `transition-[translate,scale,…]`, pas `transform`.
 
+## Responsive (téléphone / tablette)
+
+Mobile-first, breakpoints Tailwind par défaut : `sm` 640 (séries en 2 colonnes), `md` 768 (nav complète au lieu du menu), `lg` 1024 (séries en 3 colonnes, mise en page bureau). Testé à 320, 360, 375, 390, 430, 768, 1024 et en paysage (812×375).
+- **Tactile** : zones ≥ 44 px (`h-11`), texte ≥ 12 px, champs à 16 px (pas de zoom iOS), hauteurs en `svh` (jamais `vh`), zones sûres (`env(safe-area-inset-*)` : barre, menu, `body` en paysage). Survols seulement derrière `hover:` (Tailwind v4 le limite à `(hover: hover)`).
+- **Hero** : sous 640 px de large, tuiles « portrait » (`compactBelow`, `compactAspectRatio`, `compactTileHeight`, `compactAxis`) ; la description disparaît sur les écrans courts (< 700 px en portrait, < 620 px en général) pour ne pas se superposer aux images.
+- **Footer** : 3 colonnes sous 1024 px, 2 sous 560 px, liens à 44 px quand `pointer: coarse`, hauteur 600 px sur téléphone (`max-sm:h-150!`).
+- **Séries** : cartes « hautes » (4/5) seulement en 1 colonne et en 3 colonnes ; en 2 colonnes toutes en 3/2 pour des rangées alignées.
+- Vérification : mesurer débordements horizontaux, cibles < 44 px et textes < 11,5 px à chaque largeur avant de dire que c'est fini.
+
 ## Contenu et images
 
 - Textes, listes, URLs : [src/lib/site.ts](src/lib/site.ts) (`SITE`, `NAV`, `HERO_IMAGES`, `WORK_ITEMS`, `SERIES`, `CATEGORIES`, `ATELIER`, `FIGURES`, `MATIERE`, `PRESS`, `FAQ`, `CONTACT`, `FOOTER*`, `NOT_FOUND`). Validation du formulaire : [src/lib/contact.ts](src/lib/contact.ts), Server Action simulée : [src/app/actions.ts](src/app/actions.ts) (`#echec` dans le message simule une erreur serveur).

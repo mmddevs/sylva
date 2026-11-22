@@ -26,8 +26,12 @@ export function Hero() {
   return (
     <TiltedGridHero
       images={HERO_IMAGES}
-      axis={60}
+      axis={58}
       tileHeight={24}
+      compactBelow={640}
+      compactAspectRatio={0.82}
+      compactTileHeight={24}
+      compactAxis={50}
       className="h-svh min-h-150 w-full bg-background"
     >
       <div className="scroll-exit relative z-10 mx-auto flex h-full w-full max-w-6xl flex-col items-center justify-between px-6 pt-[calc(5.5rem+env(safe-area-inset-top))] pb-[max(2rem,env(safe-area-inset-bottom))] text-center">
@@ -55,7 +59,7 @@ export function Hero() {
 
         <div className="flex flex-col items-center gap-6">
           <p
-            className="hero-in max-w-md text-pretty text-base text-muted-foreground sm:text-lg"
+            className="hero-in max-w-md text-pretty text-base text-muted-foreground sm:text-lg [@media(max-width:639px)_and_(max-height:700px)]:hidden [@media(max-height:620px)]:hidden"
             style={delay(380, "0.75rem")}
           >
             {SITE.description}
@@ -78,7 +82,7 @@ export function Hero() {
           </div>
           <Link
             href="/#work"
-            className="hero-fade group mt-2 hidden items-center gap-2 font-mono text-[0.7rem] tracking-widest text-muted-foreground uppercase sm:inline-flex"
+            className="hero-fade group hidden min-h-11 items-center gap-2 font-mono text-[0.7rem] tracking-widest text-muted-foreground uppercase sm:inline-flex"
             style={delay(800)}
           >
             {SITE.scrollCue}

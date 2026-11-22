@@ -169,6 +169,9 @@
   }
   body {
     @apply bg-background text-foreground;
+    /* Paysage sur un téléphone à encoche : le contenu reste hors de l'encoche
+       (0 partout ailleurs). La barre fixe gère ses propres marges. */
+    padding-inline: env(safe-area-inset-left) env(safe-area-inset-right);
     font-feature-settings: "ss01", "kern";
   }
   h1,

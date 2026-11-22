@@ -101,7 +101,7 @@ function measure(
   );
   const radius = width * arc(bend);
   if (!(h > 0) || !(radius > 0))
-    return { columns: 2, sweep: 0, unit: 0, limit: 0, bend };
+    return { columns: 2, sweep: 0, unit: 0, limit: 0, bend, aspect, tile };
   const deg = (rad: number) => (rad * 180) / Math.PI;
   const unit = deg(h / radius);
   const pitch = (aspect + gap / 100) * unit;
@@ -116,6 +116,8 @@ function measure(
     unit: round(unit),
     limit: round(Math.min(sweep, limit)),
     bend,
+    aspect,
+    tile,
   };
 }
 
@@ -142,6 +144,18 @@ export type TiltedGridHeroProps = {
   tileHeight?: number;
   /** Tile width divided by tile height. @default 16 / 9 */
   aspectRatio?: number;
+  /**
+   * On narrow heroes (width under `compactBelow`, in px) the tiles take these
+   * proportions instead, so a phone gets tall, substantial tiles rather than
+   * a thin strip of wide ones. Omit `compactBelow` to turn this off.
+   */
+  compactBelow?: number;
+  /** Tile width divided by tile height when compact. @default aspectRatio */
+  compactAspectRatio?: number;
+  /** Tile height (% of the hero's height) when compact. @default tileHeight */
+  compactTileHeight?: number;
+  /** Vertical centre of the row when compact. @default axis */
+  compactAxis?: number;
   /** Space between tiles, as a percentage of a tile's height. @default 6 */
   gap?: number;
   /** Vertical centre of the row, as a percentage of the hero's height. @default 56 */
@@ -164,8 +178,12 @@ export function TiltedGridHero({
   speed = 4,
   tileHeight = 26,
   aspectRatio = 16 / 9,
+  compactBelow = 0,
+  compactAspectRatio = aspectRatio,
+  compactTileHeight = tileHeight,
   gap = 6,
   axis = 56,
+  compactAxis = axis,
   curve = 80,
   fade = 12,
   children,
@@ -180,9 +198,9 @@ export function TiltedGridHero({
 
   // Null until the observer has measured the hero. The band stays hidden
   // until then, so a first paint laid out for the wrong size never shows.
-  const [layout, setLayout] = React.useState<ReturnType<typeof measure> | null>(
-    null,
-  );
+  const [layout, setLayout] = React.useState<
+    (ReturnType<typeof measure> & { axis: number }) | null
+  >(null);
 
   // The image each tile shows, as a position in the run of images. It
   // only changes when the tile wraps, which is out of sight, so a resize
@@ -194,9 +212,23 @@ export function TiltedGridHero({
     if (!el) return;
     const ro = new ResizeObserver(([entry]) => {
       const { width, height } = entry.contentRect;
-      const next = measure(width, height, tileHeight, aspectRatio, gap, wanted);
+      const compact = compactBelow > 0 && width < compactBelow;
+      const next = {
+        ...measure(
+          width,
+          height,
+          compact ? compactTileHeight : tileHeight,
+          compact ? compactAspectRatio : aspectRatio,
+          gap,
+          wanted,
+        ),
+        axis: compact ? compactAxis : axis,
+      };
       setLayout((prev) =>
         prev?.columns === next.columns &&
+        prev.axis === next.axis &&
+        prev.aspect === next.aspect &&
+        prev.tile === next.tile &&
         prev.sweep === next.sweep &&
         prev.bend === next.bend &&
         prev.unit === next.unit
@@ -206,7 +238,17 @@ export function TiltedGridHero({
     });
     ro.observe(el);
     return () => ro.disconnect();
-  }, [tileHeight, aspectRatio, gap, wanted]);
+  }, [
+    tileHeight,
+    aspectRatio,
+    compactBelow,
+    compactAspectRatio,
+    compactTileHeight,
+    compactAxis,
+    axis,
+    gap,
+    wanted,
+  ]);
 
   // Fetch every image up front. A tile picks up its next one just before
   // it comes back into view, too late to start loading it then.
@@ -214,14 +256,25 @@ export function TiltedGridHero({
     for (const { src } of images) new Image().src = src;
   }, [images]);
 
-  const { columns, sweep, unit, limit, bend } =
-    layout ?? measure(1200, 560, tileHeight, aspectRatio, gap, wanted);
+  const {
+    columns,
+    sweep,
+    unit,
+    limit,
+    bend,
+    aspect: ratio,
+    tile: tileH,
+    axis: axisPct,
+  } = layout ?? {
+    ...measure(1200, 560, tileHeight, aspectRatio, gap, wanted),
+    axis,
+  };
 
   // Every length is a multiple of the tile's height, which follows the
   // hero's height until MAX_WIDTH caps it on narrow screens.
   const u = (n: number) =>
-    `calc(${+n.toFixed(4)} * min(${tileHeight}cqh, ${+(
-      MAX_WIDTH / aspectRatio
+    `calc(${+n.toFixed(4)} * min(${tileH}cqh, ${+(
+      MAX_WIDTH / ratio
     ).toFixed(4)}cqw))`;
 
   const r = 100 * arc(bend);
@@ -245,7 +298,7 @@ export function TiltedGridHero({
     // finished still.
     `@media(prefers-reduced-motion:reduce){.${tile}{animation-play-state:paused}}`;
 
-  const share = aspectRatio / SLICES;
+  const share = ratio / SLICES;
   const duration = columns * speed;
   const mask = `linear-gradient(90deg,transparent,#000 ${fade}%,#000 ${
     100 - fade
@@ -268,7 +321,7 @@ export function TiltedGridHero({
           // A shared vanishing point on the row's centre line, so the ends
           // grow evenly above and below it as they come toward the viewer.
           perspective: `${+(r * CAMERA).toFixed(3)}cqw`,
-          perspectiveOrigin: `50% ${axis}%`,
+          perspectiveOrigin: `50% ${axisPct}%`,
           maskImage: mask,
           WebkitMaskImage: mask,
         }}
@@ -283,9 +336,9 @@ export function TiltedGridHero({
               key={t}
               className={cn(tile, "absolute")}
               style={{
-                left: `calc(50% - ${u(aspectRatio / 2)})`,
-                top: `calc(${axis}% - ${u(0.5)})`,
-                width: u(aspectRatio),
+                left: `calc(50% - ${u(ratio / 2)})`,
+                top: `calc(${axisPct}% - ${u(0.5)})`,
+                width: u(ratio),
                 height: u(1),
                 transformStyle: "preserve-3d",
                 // Tile t starts t tiles along the loop.
@@ -311,7 +364,7 @@ export function TiltedGridHero({
                   style={{
                     // Every strip starts at the tile's centre and is turned
                     // round the axis to its own place on the arc.
-                    left: u((aspectRatio - share) / 2),
+                    left: u((ratio - share) / 2),
                     // Wider than its share, so neighbouring facets overlap and
                     // no hairline opens between them. The overlap scales with
                     // the slice (a fixed pixel vanishes where the facets are
@@ -323,7 +376,7 @@ export function TiltedGridHero({
                         : `calc(${u(share)} * 1.5 + 1px)`,
                     height: u(1),
                     transform: turn(
-                      (aspectRatio / 2 - (k + 0.5) * share) * unit,
+                      (ratio / 2 - (k + 0.5) * share) * unit,
                     ),
                   }}
                 >
@@ -337,7 +390,7 @@ export function TiltedGridHero({
                       className="absolute top-0 max-w-none object-cover"
                       style={{
                         left: u(-k * share),
-                        width: u(aspectRatio),
+                        width: u(ratio),
                         height: u(1),
                       }}
                     />

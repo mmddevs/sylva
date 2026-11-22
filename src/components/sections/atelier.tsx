@@ -23,7 +23,7 @@ export function Atelier() {
           <p className="mt-5 max-w-136 text-pretty text-muted-foreground">{ATELIER.text2}</p>
         </Reveal>
       </div>
-      <Reveal variant="unveil" className="relative aspect-4/5 overflow-hidden rounded-sm bg-muted shadow-print">
+      <Reveal variant="unveil" className="relative aspect-4/5 overflow-hidden sm:aspect-4/3 lg:aspect-4/5 rounded-sm bg-muted shadow-print">
         <div className="scroll-parallax absolute inset-0">
           <Image
             src={ATELIER.image.src}

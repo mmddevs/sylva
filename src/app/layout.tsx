@@ -80,7 +80,7 @@ export default function RootLayout({
       <body className="flex min-h-full flex-col">
         <a
           href="#main"
-          className="fixed top-3 left-3 z-80 -translate-y-20 rounded-full bg-primary px-4 py-2.5 text-sm text-primary-foreground transition-transform duration-(--duration-ui) ease-out focus-visible:translate-y-[env(safe-area-inset-top)]"
+          className="fixed top-3 left-3 z-80 -translate-y-20 inline-flex h-11 items-center rounded-full bg-primary px-5 text-sm text-primary-foreground transition-transform duration-(--duration-ui) ease-out focus-visible:translate-y-[env(safe-area-inset-top)]"
         >
           {SITE.skipLink}
         </a>

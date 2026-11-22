@@ -71,7 +71,7 @@ export function SiteNav() {
         "data-[solid=true]:border-border data-[solid=true]:bg-background/80 data-[solid=true]:backdrop-blur-md",
       )}
     >
-      <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-6 px-6">
+      <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-6 pr-[max(1.5rem,env(safe-area-inset-right))] pl-[max(1.5rem,env(safe-area-inset-left))]">
         <Link
           href="/"
           aria-label={NAV.home}
@@ -116,7 +116,7 @@ export function SiteNav() {
           <Button
             nativeButton={false}
             render={<Link href={NAV.cta.href} />}
-            className="hidden md:inline-flex"
+            className="hidden h-11 md:inline-flex"
             variant={active === NAV.cta.id ? "outline" : "default"}
           >
             {NAV.cta.label}

@@ -172,9 +172,22 @@ const HWF_CSS = `
   font-family: var(--hwf-mono); font-size: 10.5px; letter-spacing: .18em; text-transform: uppercase;
 }
 .hwf-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-@media (max-width: 720px) {
-  .hwf-top { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); row-gap: 18px; }
+/* Tablette : trois colonnes seulement (quatre trop étroites : les e-mails
+   débordaient sur la colonne voisine), la marque sur toute la largeur. */
+@media (max-width: 1023px) {
+  .hwf-top, .hwf-rule { font-size: 11.5px; }
+  .hwf-top { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 18px; }
   .hwf-brand { grid-column: 1 / -1; }
+}
+/* Téléphone : deux colonnes, texte à 12 px, interlettrage resserré. */
+@media (max-width: 560px) {
+  .hwf-top, .hwf-rule { font-size: 12px; letter-spacing: .14em; }
+  .hwf-top { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+}
+/* Doigt : chaque lien a une zone tactile de 44 px. */
+@media (pointer: coarse) {
+  .hwf-col a, .hwf-up { display: inline-flex; align-items: center; min-height: 44px; }
+  .hwf-col h3 { margin-bottom: 2px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .hwf-col a, .hwf-up { transition: none; }
