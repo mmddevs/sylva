@@ -1,37 +1,34 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SYLVA — Landscape Photography Atelier
 
-## Getting Started
+A **warm, immersive portfolio experience** built with Next.js, Tailwind CSS, and TypeScript, featuring a photographic "passe-partout" aesthetic, choreographed motion design, and a multi-page architecture.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Features
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- Curved 3D hero where photographs stream around the inside of a cylinder, built in pure CSS transforms with edge fades and reduced-motion support
+- Custom WebGL2 dither-helix carousel that breaks images into print grain as they recede, finite by design and handing the wheel back to the page at both ends
+- Filterable series gallery whose cards glide to their new place on filtering, linked to detail pages through shared-element view transitions
+- Scroll-triggered reveals, rolling numerical counters, and pointer reactions limited to fine pointers with no reduced-motion preference
+- Draggable press carousel and smooth FAQ accordion that track the pointer 1:1 and stay interruptible
+- Contact form powered by a Server Action with live validation, pending states, and toast feedback
+- Dual "passe-partout" theme with warm baryta-paper light mode and a darkroom dark mode, driven by OKLCH design tokens with no flash on load, shared at runtime by the WebGL carousel and halftone canvas footer
+- Multi-page responsive architecture with a fixed navigation tracking the active section, series detail pages, a custom 404, and SEO essentials (Open Graph, sitemap, robots)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Technologies Used
 
-## Learn More
+- **Next.js 16 (App Router)** – React framework with Cache Components, Turbopack, static generation, and Server Actions
+- **React 19** – Component-based UI architecture and modern React hooks, including View Transitions
+- **TypeScript** – Strongly typed JavaScript for robust scalability and maintainable development
+- **Tailwind CSS v4 + shadcn/ui** – Utility-first styling with design tokens in `globals.css` and Base UI primitives
+- **Motion + Number Flow** – Layout animations, springs, drag gestures, and animated counters
+- **WebGL2 + CSS 3D transforms** – Custom shader pipeline for the carousel and perspective geometry for the hero
+- **Custom Google Fonts** – Newsreader (Display), Hanken Grotesk (Body), and Geist Mono (Data)
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Preview
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-# newsite
+![SYLVA Preview](public/preview.png)

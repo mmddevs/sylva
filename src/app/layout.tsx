@@ -31,7 +31,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
   title: {
-    default: `${SITE.name} — Atelier de paysage`,
+    default: `${SITE.name} - Atelier de paysage`,
     template: `%s · ${SITE.name}`,
   },
   description: SITE.description,
@@ -39,13 +39,13 @@ export const metadata: Metadata = {
     type: "website",
     locale: "fr_FR",
     siteName: SITE.studio,
-    title: `${SITE.name} — Atelier de paysage`,
+    title: `${SITE.name} - Atelier de paysage`,
     description: SITE.description,
     images: [{ url: SITE.ogImage.src, width: 1200, height: 630, alt: SITE.ogImage.alt }],
   },
   twitter: {
     card: "summary_large_image",
-    title: `${SITE.name} — Atelier de paysage`,
+    title: `${SITE.name} - Atelier de paysage`,
     description: SITE.description,
     images: [SITE.ogImage.src],
   },

@@ -83,7 +83,7 @@ export default async function SeriesPage({ params }: PageProps<"/series/[slug]">
                     {facts.map((f) => (
                       <div key={f.label} className="min-w-0">
                         <dt className="text-sm text-muted-foreground">{f.label}</dt>
-                        <dd className="mt-1 font-mono text-sm break-words tabular-nums">{f.value}</dd>
+                        <dd className="mt-1 font-mono text-sm wrap-break-word tabular-nums">{f.value}</dd>
                       </div>
                     ))}
                   </dl>
