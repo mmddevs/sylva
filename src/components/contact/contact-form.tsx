@@ -220,6 +220,7 @@ export function ContactForm() {
             </Field>
             <Field id="message" label={F.message.label} error={errors.message}>
               <textarea
+                data-lenis-prevent
                 id="message"
                 name="message"
                 rows={5}

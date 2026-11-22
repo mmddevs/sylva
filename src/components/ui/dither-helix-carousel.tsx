@@ -26,6 +26,7 @@
 // flat posterisation.
 import * as React from "react";
 
+import { smoothScrollTo } from "@/lib/smooth-scroll";
 import { cn } from "@/lib/utils";
 
 export interface DitherHelixItem {
@@ -889,9 +890,9 @@ export function DitherHelixCarousel({
     const scrollToCard = (to: number) => {
       const at = scrollRange();
       if (!at || at.range <= 0) return;
-      window.scrollTo({
-        top: at.top + ((to - MIN) / (MAX - MIN)) * at.range,
-        behavior: reduced ? "auto" : "smooth",
+      smoothScrollTo(at.top + ((to - MIN) / (MAX - MIN)) * at.range, {
+        immediate: reduced,
+        duration: 1,
       });
     };
 

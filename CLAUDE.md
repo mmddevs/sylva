@@ -2,7 +2,7 @@
 
 # Sylva — site vitrine (Next.js 16 + Tailwind v4 + shadcn)
 
-Site d'un atelier de paysage fictif. Accueil : hero → carousel (#work) → Séries (#series) → Atelier (#atelier) → Parcours (#parcours) → Matière (#matiere) → Presse (#presse) → FAQ (#faq) → Contact (#contact, formulaire) → footer. Pages `/series/[slug]` (statiques), `not-found`, `sitemap`, `robots`.
+Site d'un atelier de paysage fictif. Accueil : hero → carousel (#work) → Séries (#series, accordéon d'images) → Parcours (#parcours) → Matière (#matiere) → défilement diagonal → Presse (#presse) → FAQ (#faq) → Contact (#contact, formulaire) → footer. Pages `/series/[slug]` (statiques), `not-found`, `sitemap`, `robots`.
 Langue du site et des textes : **français** (espaces insécables avant ? ! : ; et dans « »).
 
 ## Commandes
@@ -26,7 +26,8 @@ Langue du site et des textes : **français** (espaces insécables avant ? ! : ; 
 
 - **Un seul système d'apparition** : [src/components/reveal.tsx](src/components/reveal.tsx) — `Reveal` (`rise` | `fade` | `unveil` | `draw-x`, `delay` échelonné 100–150 ms), `RevealText` (mots), `Rule` (filet qui se dessine), `useInView`. CSS dans `globals.css` (`[data-reveal]`).
 - Hero : entrée chorégraphiée en CSS (`.hero-in`, `--hero-delay`), timeline commentée dans [hero.tsx](src/components/hero.tsx). Lié au scroll : `.scroll-exit`, `.scroll-parallax`, `.scroll-draw-y` (CSS scroll-driven, ignoré sans support ou en reduced motion).
-- Ressorts / drag / layout : `motion` (`motion/react`). Compteurs : `@number-flow/react` via [Counter](src/components/motion/counter.tsx). Toasts : `sonner` ([AppToaster](src/components/app-toaster.tsx)). Pointeur : `Magnetic` et `PointerHalo` ([pointer.tsx](src/components/motion/pointer.tsx)), souris uniquement.
+- Ressorts / drag / layout : `motion` (`motion/react`). Compteurs : `@number-flow/react` via [Counter](src/components/motion/counter.tsx). Toasts : `sonner` ([AppToaster](src/components/app-toaster.tsx)). Pointeur : `Magnetic` et `CursorDisc` ([pointer.tsx](src/components/motion/pointer.tsx)) : rond plein `bg-sun` qui suit la souris (la flèche système reste), grossit sur ce qui se clique, se resserre à l'appui, s'efface dans les champs, étiquette via `data-cursor="…"` ; souris seulement.
+- **Défilement doux** : Lenis ([SmoothScroll](src/components/smooth-scroll.tsx), `lerp: 0.09`), actif seulement à la souris/trackpad et hors reduced motion (au doigt, le natif est déjà inertiel). Tout défilement programmé passe par [smoothScrollTo](src/lib/smooth-scroll.ts) (jamais `window.scrollTo({ behavior: "smooth" })` directement). Les liens `/#ancre` de la même page sont interceptés (défilement doux + `scroll-padding-top`). Une zone qui défile d'elle-même porte `data-lenis-prevent` (menu mobile, textarea).
 - View transitions React : morph `series-<slug>` (grille → détail, `share="morph"`), `page-enter`/`page-exit`. Garder `data-scroll-behavior="smooth"` sur `<html>`.
 - `transform`/`opacity` (+ `clip-path` pour dévoiler, hauteur pour l'accordéon). Entrées `ease-out`. UI < 300 ms. Rien au clavier ni sur la nav. `motion-reduce:` partout. En Tailwind v4, `translate-*`/`scale-*`/`rotate-*` sont des propriétés à part : écrire `transition-[translate,scale,…]`, pas `transform`.
 
@@ -36,7 +37,7 @@ Mobile-first, breakpoints Tailwind par défaut : `sm` 640 (séries en 2 colonnes
 - **Tactile** : zones ≥ 44 px (`h-11`), texte ≥ 12 px, champs à 16 px (pas de zoom iOS), hauteurs en `svh` (jamais `vh`), zones sûres (`env(safe-area-inset-*)` : barre, menu, `body` en paysage). Survols seulement derrière `hover:` (Tailwind v4 le limite à `(hover: hover)`).
 - **Hero** : sous 640 px de large, tuiles « portrait » (`compactBelow`, `compactAspectRatio`, `compactTileHeight`, `compactAxis`) ; la description disparaît sur les écrans courts (< 700 px en portrait, < 620 px en général) pour ne pas se superposer aux images.
 - **Footer** : 3 colonnes sous 1024 px, 2 sous 560 px, liens à 44 px quand `pointer: coarse`, hauteur 600 px sur téléphone (`max-sm:h-150!`).
-- **Séries** : cartes « hautes » (4/5) seulement en 1 colonne et en 3 colonnes ; en 2 colonnes toutes en 3/2 pour des rangées alignées.
+- **Séries** : accordéon [HoverExpand](src/components/ui/expand-on-hover.tsx) — horizontal à partir de `lg`, vertical en dessous (panneaux fermés ≥ 44 px) ; au toucher, un premier appui ouvre et un second suit le lien (le survol souris ouvre, le focus clavier aussi).
 - Vérification : mesurer débordements horizontaux, cibles < 44 px et textes < 11,5 px à chaque largeur avant de dire que c'est fini.
 
 ## Contenu et images
@@ -48,6 +49,7 @@ Mobile-first, breakpoints Tailwind par défaut : `sm` 640 (séries en 2 colonnes
 ## Composants fournis (à modifier avec précaution)
 
 - `tilted-grid-hero.tsx` : hero cylindre CSS 3D, via [hero.tsx](src/components/hero.tsx). Modifié : `fitBend` réduit la courbure (`curve`) pour que le bord extérieur d'une tuile reste sous 112° (la caméra est à 126,9° : au-delà les facettes explosent et traversent le hero comme un éclair) ; les tranches se chevauchent de 50 % + 1 px (sinon des coutures scintillent aux extrémités).
+- `expand-on-hover.tsx` : accordéon d'images (21st.dev, « Expand on hover »), utilisé par [SeriesSection](src/components/sections/series.tsx). Adapté : transition CSS sur `flex-grow` (pas de framer-motion ni swiper), image à taille fixe dévoilée par le panneau, jetons du thème, `next/image`, transition de vue partagée `series-<slug>` vers la page série.
 - `great-ui-diagonal-marquee-carousel.tsx` : défilement diagonal (MIT, Great UI), utilisé par [Marquee](src/components/sections/marquee.tsx) avec les couvertures des séries. Adapté : jetons du thème, `next/image`, keyframes `diag-left` / `diag-right` dans `globals.css` (`animate-diag-*`, durée via `--speed`), décoratif (`aria-hidden`, cartes `tabIndex -1`, cliquables souris/doigt), arrêt au survol et en reduced motion. Garder la mention de licence en bas du fichier.
 - `dither-helix-carousel.tsx` : carousel WebGL **fini** (première → dernière carte, pas de boucle infinie). Sur le site il est **épinglé** : [Work](src/components/sections/work.tsx) = section haute (100svh + 7 × 60svh) avec un cadre `sticky h-svh` ; le défilement de la page (prop `scrollTarget`) fait tourner la colonne, chaque carte « s'attarde » (DWELL), puis la page reprend. Molette et glisser sont laissés à la page (`touch-action: pan-y`), flèches et clic scrollent vers la carte. Sans la prop, l'ancien mode molette/glisser (qui rend la molette aux extrémités) reste disponible. `edge` (0 par défaut) règle le flou/grain sur les bords haut et bas : le laisser à 0. Pause hors écran / onglet caché, monté à l'approche via [LazyMount](src/components/lazy-mount.tsx).
 - `halftone-wordmark-footer.tsx` : footer canvas, palette fournie par [SiteFooter](src/components/site-footer.tsx) depuis le thème ; prop `backToTopLabel` ajoutée.

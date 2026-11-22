@@ -2,9 +2,9 @@
 
 import * as React from "react";
 import { Counter } from "@/components/motion/counter";
-import { SeriesGrid } from "@/components/series/series-grid";
+import HoverExpand from "@/components/ui/expand-on-hover";
 import { WORST_FIGURES, WORST_SERIES } from "@/lib/fixtures/worst-case";
-import { FIGURES, SERIES } from "@/lib/site";
+import { FIGURES, SERIES, SERIES_SECTION, categoryLabel } from "@/lib/site";
 
 const STATES = ["demo", "worst", "empty", "one"] as const;
 type State = (typeof STATES)[number];
@@ -38,7 +38,22 @@ export function BreakUi() {
         ))}
       </ul>
       <div className="mt-20" key={state}>
-        <SeriesGrid series={series} />
+        {series.length === 0 ? (
+          <p className="rounded-lg border border-dashed border-border p-10 text-center text-muted-foreground">
+            Aucune série.
+          </p>
+        ) : (
+          <HoverExpand
+            items={series.map((s) => ({
+              id: s.slug,
+              src: s.cover.src,
+              alt: s.cover.alt,
+              title: s.title,
+              meta: `${categoryLabel(s.category)} · ${s.year} · ${SERIES_SECTION.printsLabel(s.prints)}`,
+              href: `/series/${s.slug}`,
+            }))}
+          />
+        )}
       </div>
       <div className="fixed bottom-4 left-1/2 z-90 flex -translate-x-1/2 gap-1 rounded-full border border-border bg-card p-1 font-sans text-xs text-card-foreground shadow-lift">
         {STATES.map((s) => (

@@ -29,7 +29,6 @@ export const NAV = {
   links: [
     { id: "work", label: "Œuvre", href: "/#work" },
     { id: "series", label: "Séries", href: "/#series" },
-    { id: "atelier", label: "Atelier", href: "/#atelier" },
     { id: "presse", label: "Presse", href: "/#presse" },
     { id: "faq", label: "Questions", href: "/#faq" },
   ],
@@ -232,15 +231,10 @@ export const SERIES: Series[] = [
 ];
 
 export const SERIES_SECTION = {
-  title: "Séries",
+  title: "Chaque série, une marche.",
   intro:
-    "Chaque série naît d’un lieu et d’une saison. Filtrez par paysage, ouvrez une série pour voir ses tirages.",
-  all: "Toutes",
-  filterLabel: "Filtrer les séries par paysage",
-  empty: "Aucune série dans ce paysage pour le moment.",
-  open: "Voir",
+    "Des forêts, des lacs, des crêtes : chaque série naît d’un lieu et d’une saison. Survolez-en une pour l’ouvrir, touchez-la deux fois sur un écran tactile.",
   printsLabel: (n: number) => `${n} tirage${n > 1 ? "s" : ""}`,
-  shownLabel: (n: number) => `${n} série${n > 1 ? "s" : ""} affichée${n > 1 ? "s" : ""}`,
 } as const;
 
 export const SERIES_PAGE = {
@@ -253,16 +247,6 @@ export const SERIES_PAGE = {
   next: "Série suivante",
   cta: "Commander un tirage de cette série",
   neighbours: "Séries voisines",
-} as const;
-
-/* ── Atelier ────────────────────────────────────────────────────── */
-
-export const ATELIER = {
-  title: "Un regard lent sur le paysage.",
-  text: "Sylva Atelier compose des images à partir de forêts, de lacs et de crêtes. Chaque série naît d’une marche, d’un carnet, puis d’un long travail de lumière et de grain.",
-  text2:
-    "Nous travaillons à deux, entre le terrain et le laboratoire. Rien n’est retouché au-delà de ce que permettrait une chambre noire.",
-  image: { src: photo("sous-bois-fougeres"), alt: "Sous-bois brumeux, fougères au premier plan" },
 } as const;
 
 /* ── Chiffres et parcours ───────────────────────────────────────── */
@@ -437,8 +421,8 @@ export const FOOTER_COLUMNS = [
   {
     title: "Atelier",
     links: [
-      { label: "À propos", href: "/#atelier" },
       { label: "Matière", href: "/#matiere" },
+      { label: "Presse", href: "/#presse" },
       { label: "Questions", href: "/#faq" },
     ],
   },

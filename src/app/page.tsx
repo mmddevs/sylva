@@ -1,5 +1,4 @@
 import { Hero } from "@/components/hero";
-import { Atelier } from "@/components/sections/atelier";
 import { Contact } from "@/components/sections/contact";
 import { Faq } from "@/components/sections/faq";
 import { Figures } from "@/components/sections/figures";
@@ -15,7 +14,6 @@ export default function Home() {
       <Hero />
       <Work />
       <SeriesSection />
-      <Atelier />
       <Figures />
       <Matiere />
       <Marquee />

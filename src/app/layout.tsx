@@ -2,7 +2,8 @@ import type { Metadata, Viewport } from "next";
 import { Geist_Mono, Hanken_Grotesk, Newsreader } from "next/font/google";
 import { AppToaster } from "@/components/app-toaster";
 import { ThemeColor } from "@/components/theme/theme-color";
-import { PointerHalo } from "@/components/motion/pointer";
+import { CursorDisc } from "@/components/motion/pointer";
+import { SmoothScroll } from "@/components/smooth-scroll";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteNav } from "@/components/site-nav";
 import { themeScript } from "@/lib/theme-script";
@@ -88,7 +89,8 @@ export default function RootLayout({
         {children}
         <SiteFooter />
         <div aria-hidden className="grain" />
-        <PointerHalo />
+        <CursorDisc />
+        <SmoothScroll />
         <AppToaster />
         <ThemeColor />
       </body>

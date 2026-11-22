@@ -132,6 +132,7 @@ export function SiteNav() {
             <Dialog.Portal>
               <Dialog.Backdrop className="fixed inset-0 z-50 bg-foreground/20 transition-opacity duration-500 ease-drawer data-ending-style:opacity-0 data-starting-style:opacity-0 motion-reduce:duration-150" />
               <Dialog.Popup
+                data-lenis-prevent
                 className={cn(
                   "fixed inset-x-0 top-0 z-50 flex max-h-svh flex-col overflow-y-auto rounded-b-2xl border-b border-border bg-background",
                   "pt-[env(safe-area-inset-top)] pb-[max(1.5rem,env(safe-area-inset-bottom))] shadow-lift outline-none",
