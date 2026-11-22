@@ -3,6 +3,7 @@ import { Atelier } from "@/components/sections/atelier";
 import { Contact } from "@/components/sections/contact";
 import { Faq } from "@/components/sections/faq";
 import { Figures } from "@/components/sections/figures";
+import { Marquee } from "@/components/sections/marquee";
 import { Matiere } from "@/components/sections/matiere";
 import { Press } from "@/components/sections/press";
 import { SeriesSection } from "@/components/sections/series";
@@ -17,6 +18,7 @@ export default function Home() {
       <Atelier />
       <Figures />
       <Matiere />
+      <Marquee />
       <Press />
       <Faq />
       <Contact />

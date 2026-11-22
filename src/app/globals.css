@@ -71,6 +71,8 @@
   --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
 
   --animate-marquee: marquee 40s linear infinite;
+  --animate-diag-left: diag-left var(--speed, 120s) linear infinite;
+  --animate-diag-right: diag-right var(--speed, 120s) linear infinite;
   --animate-grain: grain 1.2s steps(6) infinite;
 }
 
@@ -251,6 +253,15 @@
   67% { transform: translate(8%, 2%); }
   83% { transform: translate(-9%, -4%); }
   100% { transform: translate(0, 0); }
+}
+
+/* Marquee en diagonale : un demi-rang (deux tours de cartes) par cycle. */
+@keyframes diag-left {
+  to { transform: translate3d(-50%, 0, 0); }
+}
+@keyframes diag-right {
+  from { transform: translate3d(-50%, 0, 0); }
+  to { transform: translate3d(0, 0, 0); }
 }
 
 @keyframes marquee {

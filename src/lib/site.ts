@@ -285,6 +285,14 @@ export const FIGURES = {
   ],
 } as const;
 
+/* ── Défilement des séries (marquee diagonal) ──────────────────── */
+
+export const MARQUEE = {
+  title: "Le résultat, série après série.",
+  text: "Des forêts, des lacs, des crêtes : chaque série garde la lenteur de la marche qui l’a fait naître.",
+  cta: { label: "Voir toutes les séries", href: "/#series" },
+} as const;
+
 /* ── Matière ────────────────────────────────────────────────────── */
 
 export const MATIERE = {
