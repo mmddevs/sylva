@@ -5,7 +5,8 @@ export const SITE = {
   name: "Sylva",
   studio: "Sylva Atelier",
   url: "https://sylva.example",
-  meta: "©2026 · Forêt / Lumière",
+  /** Fin de la ligne de copyright ; l'année est calculée dans SiteFooter. */
+  metaTail: "Forêt / Lumière",
   tagline: "La forêt,\nramenée à la lumière.",
   description:
     "Atelier de paysage photographique. Des séries nées d’une marche, développées lentement, imprimées sur papier baryté.",
