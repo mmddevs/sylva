@@ -38,8 +38,8 @@ Langue du site et des textes : **français** (espaces insécables avant ? ! : ; 
 
 ## Composants fournis (à modifier avec précaution)
 
-- `tilted-grid-hero.tsx` : hero cylindre CSS 3D, via [hero.tsx](src/components/hero.tsx).
-- `dither-helix-carousel.tsx` : carousel WebGL **fini** qui rend la molette à la page (`MIN`/`MAX`, `atEnd`). Ne pas rétablir la boucle infinie. Se met en pause hors écran / onglet caché ; monté à l'approche via [LazyMount](src/components/lazy-mount.tsx).
+- `tilted-grid-hero.tsx` : hero cylindre CSS 3D, via [hero.tsx](src/components/hero.tsx). Modifié : `fitBend` réduit la courbure (`curve`) pour que le bord extérieur d'une tuile reste sous 112° (la caméra est à 126,9° : au-delà les facettes explosent et traversent le hero comme un éclair) ; les tranches se chevauchent de 50 % + 1 px (sinon des coutures scintillent aux extrémités).
+- `dither-helix-carousel.tsx` : carousel WebGL **fini** (première → dernière carte, pas de boucle infinie). Sur le site il est **épinglé** : [Work](src/components/sections/work.tsx) = section haute (100svh + 7 × 60svh) avec un cadre `sticky h-svh` ; le défilement de la page (prop `scrollTarget`) fait tourner la colonne, chaque carte « s'attarde » (DWELL), puis la page reprend. Molette et glisser sont laissés à la page (`touch-action: pan-y`), flèches et clic scrollent vers la carte. Sans la prop, l'ancien mode molette/glisser (qui rend la molette aux extrémités) reste disponible. `edge` (0 par défaut) règle le flou/grain sur les bords haut et bas : le laisser à 0. Pause hors écran / onglet caché, monté à l'approche via [LazyMount](src/components/lazy-mount.tsx).
 - `halftone-wordmark-footer.tsx` : footer canvas, palette fournie par [SiteFooter](src/components/site-footer.tsx) depuis le thème ; prop `backToTopLabel` ajoutée.
 
 Les `<img>` brutes dans ces composants sont voulues : l'avertissement ESLint `no-img-element` y est désactivé ligne par ligne, avec la raison.

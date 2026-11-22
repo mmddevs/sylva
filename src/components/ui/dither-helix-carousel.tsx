@@ -48,6 +48,17 @@ export interface DitherHelixCarouselProps extends Omit<
   cell?: number;
   /** How much of the frame's height stays sharp before the dissolve starts, 0-1. @default 0.25 */
   focusBand?: number;
+  /** Strength of the smear and grain along the top and bottom borders, 0-1.
+      0 leaves the cards crisp right up to the frame. @default 0 */
+  edge?: number;
+  /** Pins the column to the page's scroll instead of the wheel. Pass a ref to
+      a tall section whose only child is a `sticky h-svh` frame holding this
+      carousel: scrolling through that section turns the column from the first
+      card to the last, then the page carries on. Wheel and drag are left to
+      the page. @default undefined */
+  scrollTarget?: React.RefObject<HTMLElement | null>;
+  /** Called once if WebGL2 is unavailable and the native fallback is shown. */
+  onUnsupported?: () => void;
   /** Turn of the helix between one card and the next, in radians. @default 0.8 */
   twist?: number;
   /** Rise of the helix between one card and the next, in card heights. @default 0.79 */
@@ -299,6 +310,7 @@ uniform vec2  uResolution;
 uniform vec3  uBackground;
 uniform vec3  uAccent;
 uniform float uFocusSize;
+uniform float uEdge;
 uniform float uDitherScale;
 uniform float uEntryScale;
 
@@ -387,7 +399,7 @@ vec3 quantise(vec3 c, float threshold, float levels, float gamma) {
 void main() {
   // Zero across the middle band, rising to one at the upper and lower borders.
   float d = abs(vUv.y - 0.5) * 2.0;
-  float edge = pow(smoothstep(uFocusSize, 1.0, d), EDGE_POWER);
+  float edge = pow(smoothstep(uFocusSize, 1.0, d), EDGE_POWER) * uEdge;
 
   vec4 scene = texture(uScene, vUv);
   vec4 meta = texture(uMeta, vUv);
@@ -540,6 +552,9 @@ export function DitherHelixCarousel({
   accent,
   cell = 7.5,
   focusBand = 0.25,
+  edge = 0,
+  scrollTarget,
+  onUnsupported,
   twist = 0.8,
   rise = 0.79,
   cardRatio = 2,
@@ -556,12 +571,17 @@ export function DitherHelixCarousel({
     accent,
     cell,
     focusBand,
+    edge,
     twist,
     rise,
     cardRatio,
   });
+  const pinned = React.useRef(scrollTarget);
+  const unsupported = React.useRef(onUnsupported);
   React.useLayoutEffect(() => {
-    settings.current = { accent, cell, focusBand, twist, rise, cardRatio };
+    settings.current = { accent, cell, focusBand, edge, twist, rise, cardRatio };
+    pinned.current = scrollTarget;
+    unsupported.current = onUnsupported;
   });
   /** Populated by the render loop so keyboard input drives the same rotation the
       wheel does. */
@@ -584,6 +604,7 @@ export function DitherHelixCarousel({
     const gl = canvas.getContext("webgl2", { alpha: false, antialias: false });
     if (!gl) {
       setSupported(false);
+      unsupported.current?.();
       return;
     }
 
@@ -738,6 +759,8 @@ export function DitherHelixCarousel({
     const FRONT = Math.floor(count / 2);
     const MIN = -FRONT;
     const MAX = count - 1 - FRONT;
+    const pin = pinned.current;
+    const linked = !!pin;
     let progress = MIN;
     let goal = MIN;
     let smoothed = 0; // velocity feeding the bend
@@ -844,6 +867,34 @@ export function DitherHelixCarousel({
       return best;
     };
 
+    // --- scroll-linked ----------------------------------------------------
+    // Scrolling through the tall section moves the column from the first card
+    // to the last. Each card dwells for the middle of its stretch of scroll and
+    // turns to the next over the rest, so the page tends to come to rest on a
+    // card instead of between two.
+    const DWELL = 0.3;
+    const dwell = (x: number) => {
+      const i = Math.floor(x);
+      const t = clamp((x - i - DWELL) / (1 - 2 * DWELL), 0, 1);
+      return i + inOutCubic(t);
+    };
+    const scrollRange = () => {
+      const el = pin?.current;
+      if (!el) return null;
+      return {
+        top: el.getBoundingClientRect().top + window.scrollY,
+        range: el.offsetHeight - height,
+      };
+    };
+    const scrollToCard = (to: number) => {
+      const at = scrollRange();
+      if (!at || at.range <= 0) return;
+      window.scrollTo({
+        top: at.top + ((to - MIN) / (MAX - MIN)) * at.range,
+        behavior: reduced ? "auto" : "smooth",
+      });
+    };
+
     // --- input ------------------------------------------------------------
     const onWheel = (event: WheelEvent) => {
       // At either end, let the page scroll on to the next section.
@@ -864,9 +915,13 @@ export function DitherHelixCarousel({
       lastInput = performance.now();
       snapped = false;
     };
-    canvas.addEventListener("wheel", onWheel, { passive: false });
+    if (!linked) canvas.addEventListener("wheel", onWheel, { passive: false });
 
     step.current = (by: number) => {
+      if (linked) {
+        scrollToCard(clamp(Math.round(goal) + by, MIN, MAX));
+        return;
+      }
       tween = {
         from: goal,
         to: clamp(Math.round(goal) + by, MIN, MAX),
@@ -882,7 +937,7 @@ export function DitherHelixCarousel({
       dragFrom = event.clientY;
       dragTravel = 0;
       tween = null;
-      canvas.setPointerCapture(event.pointerId);
+      if (!linked) canvas.setPointerCapture(event.pointerId);
     };
     const onMove = (event: PointerEvent) => {
       const box = canvas.getBoundingClientRect();
@@ -895,10 +950,17 @@ export function DitherHelixCarousel({
         const travel = dragFrom - event.clientY;
         dragTravel += Math.abs(travel);
         dragFrom = event.clientY;
-        goal = clamp(goal + travel * DRAG, MIN, MAX);
-        lastInput = performance.now();
-        snapped = false;
+        if (!linked) {
+          goal = clamp(goal + travel * DRAG, MIN, MAX);
+          lastInput = performance.now();
+          snapped = false;
+        }
       }
+    };
+    // The browser took the gesture over (a touch that turned into a page
+    // scroll): that is not a click.
+    const onCancel = () => {
+      dragFrom = null;
     };
     const onUp = () => {
       const wasClick = dragFrom !== null && dragTravel < CLICK_SLOP;
@@ -908,6 +970,10 @@ export function DitherHelixCarousel({
       // Advance to the facing slot along whichever direction is shorter.
       if (hit >= 0) {
         const to = clamp(hit - FRONT, MIN, MAX);
+        if (linked) {
+          scrollToCard(to);
+          return;
+        }
         tween = { from: goal, to, at: performance.now() };
         snapped = true;
       }
@@ -921,7 +987,7 @@ export function DitherHelixCarousel({
     canvas.addEventListener("pointerdown", onDown);
     canvas.addEventListener("pointermove", onMove);
     canvas.addEventListener("pointerup", onUp);
-    canvas.addEventListener("pointercancel", onUp);
+    canvas.addEventListener("pointercancel", onCancel);
     canvas.addEventListener("pointerleave", onLeave);
 
     // --- frame ------------------------------------------------------------
@@ -940,6 +1006,7 @@ export function DitherHelixCarousel({
       const {
         cell: cellPx,
         focusBand: band,
+        edge: edgeAmount,
         twist: turn,
         rise: pitch,
         cardRatio: ratio,
@@ -976,7 +1043,15 @@ export function DitherHelixCarousel({
         playEntry && !reduced && ready && elapsed < ENTRY_SPIN_MS;
 
       // --- turn -----------------------------------------------------------
-      if (tween) {
+      if (linked) {
+        tween = null;
+        snapped = false;
+        const at = scrollRange();
+        if (at) {
+          const p = at.range > 0 ? clamp((window.scrollY - at.top) / at.range, 0, 1) : 0;
+          goal = MIN + dwell(p * (MAX - MIN));
+        }
+      } else if (tween) {
         const t = clamp((now - tween.at) / CLICK_MS, 0, 1);
         goal = tween.from + (tween.to - tween.from) * inOutCubic(t);
         if (t >= 1) tween = null;
@@ -1097,6 +1172,7 @@ export function DitherHelixCarousel({
       gl.uniform3fv(compositeU("uBackground"), background);
       gl.uniform3fv(compositeU("uAccent"), accentRgb);
       gl.uniform1f(compositeU("uFocusSize"), band);
+      gl.uniform1f(compositeU("uEdge"), edgeAmount);
       gl.uniform1f(compositeU("uDitherScale"), cellPx);
       gl.uniform1f(compositeU("uEntryScale"), 9.5);
       drawQuad();
@@ -1113,7 +1189,7 @@ export function DitherHelixCarousel({
       canvas.removeEventListener("pointerdown", onDown);
       canvas.removeEventListener("pointermove", onMove);
       canvas.removeEventListener("pointerup", onUp);
-      canvas.removeEventListener("pointercancel", onUp);
+      canvas.removeEventListener("pointercancel", onCancel);
       canvas.removeEventListener("pointerleave", onLeave);
       for (const image of images) image.onload = null;
       for (const card of cards)
@@ -1185,7 +1261,12 @@ export function DitherHelixCarousel({
         role="listbox"
         aria-label={brand ?? "Gallery"}
         aria-activedescendant={`dither-helix-${active}`}
-        className="bg-background text-foreground focus-visible:outline-ring absolute inset-0 h-full w-full cursor-grab touch-pan-x outline-none focus-visible:outline-2 focus-visible:outline-solid focus-visible:-outline-offset-4 active:cursor-grabbing"
+        className={cn(
+          "bg-background text-foreground focus-visible:outline-ring absolute inset-0 h-full w-full outline-none focus-visible:outline-2 focus-visible:outline-solid focus-visible:-outline-offset-4",
+          scrollTarget
+            ? "cursor-pointer touch-pan-y"
+            : "cursor-grab touch-pan-x active:cursor-grabbing",
+        )}
         onKeyDown={(event) => {
           if (event.key === "ArrowDown") step.current(1);
           else if (event.key === "ArrowUp") step.current(-1);
@@ -1211,7 +1292,7 @@ export function DitherHelixCarousel({
       </ul>
 
       {brand ? (
-        <div className="pointer-events-none absolute top-[6%] left-[5%] text-sm font-medium tracking-tight">
+        <div className="pointer-events-none absolute top-[max(6%,5rem)] left-[5%] text-sm font-medium tracking-tight">
           {brand}
         </div>
       ) : null}

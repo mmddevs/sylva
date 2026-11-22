@@ -46,6 +46,37 @@ function arc(bend: number) {
 // shows its neighbours instead of one tile edge to edge.
 const MAX_WIDTH = 55;
 
+// How far round the cylinder (degrees) a tile's outer edge may swing. The
+// camera sits just past the axis, so at 180° − acos(CAMERA − 1) ≈ 126.9° an
+// edge reaches the plane of the lens and its facets blow up to a million
+// pixels wide: they cross the hero as a bright streak every time a tile
+// wraps. Staying well short of it keeps every facet a sane size.
+const MAX_REACH = 112;
+const MIN_BEND = (25 * Math.PI) / 180;
+
+/**
+ * The largest bend, up to `wanted`, for which a tile's outer edge stays
+ * within MAX_REACH when it wraps: the bend plus the arc one tile spans.
+ */
+function fitBend(
+  wanted: number,
+  width: number,
+  height: number,
+  tile: number,
+  aspect: number,
+) {
+  const h = Math.min(
+    (tile / 100) * height,
+    ((MAX_WIDTH / 100) * width) / aspect,
+  );
+  if (!(h > 0) || !(width > 0)) return wanted;
+  const deg = (rad: number) => (rad * 180) / Math.PI;
+  for (let b = wanted; b > MIN_BEND; b -= 0.01) {
+    if (deg(b) + aspect * deg(h / (width * arc(b))) <= MAX_REACH) return b;
+  }
+  return MIN_BEND;
+}
+
 /**
  * Lays the loop on the cylinder. The radius puts the frame's edge `bend`
  * radians round the arc (see `arc`). Angles come back in degrees: `unit`
@@ -61,15 +92,16 @@ function measure(
   tile: number,
   aspect: number,
   gap: number,
-  bend: number,
+  wanted: number,
 ) {
+  const bend = fitBend(wanted, width, height, tile, aspect);
   const h = Math.min(
     (tile / 100) * height,
     ((MAX_WIDTH / 100) * width) / aspect,
   );
   const radius = width * arc(bend);
   if (!(h > 0) || !(radius > 0))
-    return { columns: 2, sweep: 0, unit: 0, limit: 0 };
+    return { columns: 2, sweep: 0, unit: 0, limit: 0, bend };
   const deg = (rad: number) => (rad * 180) / Math.PI;
   const unit = deg(h / radius);
   const pitch = (aspect + gap / 100) * unit;
@@ -83,6 +115,7 @@ function measure(
     sweep,
     unit: round(unit),
     limit: round(Math.min(sweep, limit)),
+    bend,
   };
 }
 
@@ -143,7 +176,7 @@ export function TiltedGridHero({
   const id = React.useId().replace(/[^a-zA-Z0-9]/g, "");
   const orbit = `tgh-o-${id}`;
   const tile = `tgh-t-${id}`;
-  const bend = (Math.min(85, Math.max(5, curve)) * Math.PI) / 180;
+  const wanted = (Math.min(85, Math.max(5, curve)) * Math.PI) / 180;
 
   // Null until the observer has measured the hero. The band stays hidden
   // until then, so a first paint laid out for the wrong size never shows.
@@ -161,10 +194,11 @@ export function TiltedGridHero({
     if (!el) return;
     const ro = new ResizeObserver(([entry]) => {
       const { width, height } = entry.contentRect;
-      const next = measure(width, height, tileHeight, aspectRatio, gap, bend);
+      const next = measure(width, height, tileHeight, aspectRatio, gap, wanted);
       setLayout((prev) =>
         prev?.columns === next.columns &&
         prev.sweep === next.sweep &&
+        prev.bend === next.bend &&
         prev.unit === next.unit
           ? prev
           : next,
@@ -172,7 +206,7 @@ export function TiltedGridHero({
     });
     ro.observe(el);
     return () => ro.disconnect();
-  }, [tileHeight, aspectRatio, gap, bend]);
+  }, [tileHeight, aspectRatio, gap, wanted]);
 
   // Fetch every image up front. A tile picks up its next one just before
   // it comes back into view, too late to start loading it then.
@@ -180,8 +214,8 @@ export function TiltedGridHero({
     for (const { src } of images) new Image().src = src;
   }, [images]);
 
-  const { columns, sweep, unit, limit } =
-    layout ?? measure(1200, 560, tileHeight, aspectRatio, gap, bend);
+  const { columns, sweep, unit, limit, bend } =
+    layout ?? measure(1200, 560, tileHeight, aspectRatio, gap, wanted);
 
   // Every length is a multiple of the tile's height, which follows the
   // hero's height until MAX_WIDTH caps it on narrow screens.
@@ -278,11 +312,15 @@ export function TiltedGridHero({
                     // Every strip starts at the tile's centre and is turned
                     // round the axis to its own place on the arc.
                     left: u((aspectRatio - share) / 2),
-                    // A pixel wider than its share, so neighbouring facets
-                    // overlap and no hairline opens between them. The last
-                    // has no neighbour to cover.
+                    // Wider than its share, so neighbouring facets overlap and
+                    // no hairline opens between them. The overlap scales with
+                    // the slice (a fixed pixel vanishes where the facets are
+                    // foreshortened at the ends, and the seam shimmers). The
+                    // last has no neighbour to cover.
                     width:
-                      k === SLICES - 1 ? u(share) : `calc(${u(share)} + 1px)`,
+                      k === SLICES - 1
+                        ? u(share)
+                        : `calc(${u(share)} * 1.5 + 1px)`,
                     height: u(1),
                     transform: turn(
                       (aspectRatio / 2 - (k + 0.5) * share) * unit,
