@@ -46,6 +46,8 @@ export interface HalftoneWordmarkFooterProps {
   columns?: FooterColumn[]
   /** Show the back-to-top link. It scrolls the window to 0. Defaults to true. */
   backToTop?: boolean
+  /** Label of the back-to-top link. Defaults to "Back to top ↑". */
+  backToTopLabel?: string
   /** Starting colours. Defaults to "night". */
   preset?: HalftonePreset
   /** Colour overrides, merged over the preset. */
@@ -185,6 +187,7 @@ export default function HalftoneWordmarkFooter({
   meta = "©2026 · Oslo / Lisbon",
   columns = DEFAULT_COLUMNS,
   backToTop = true,
+  backToTopLabel = "Back to top ↑",
   preset = "night",
   palette,
   dotGap = 6,
@@ -202,7 +205,9 @@ export default function HalftoneWordmarkFooter({
   const rootRef = React.useRef(null as HTMLElement | null)
   const canvasRef = React.useRef(null as HTMLCanvasElement | null)
   const opts = React.useRef({ colors, dotGap, radius, crop, grain, interactive, fontFamily, fontWeight, wordmark })
-  opts.current = { colors, dotGap, radius, crop, grain, interactive, fontFamily, fontWeight, wordmark }
+  React.useLayoutEffect(() => {
+    opts.current = { colors, dotGap, radius, crop, grain, interactive, fontFamily, fontWeight, wordmark }
+  })
   const key = [wordmark, dotGap, crop, grain, fontFamily, fontWeight, colors.background, colors.ink, colors.warm].join("|")
 
   React.useEffect(() => {
@@ -488,7 +493,7 @@ export default function HalftoneWordmarkFooter({
       <div className="hwf-rule">
         {backToTop ? (
           <button type="button" className="hwf-up" onClick={toTop}>
-            Back to top ↑
+            {backToTopLabel}
           </button>
         ) : null}
       </div>
