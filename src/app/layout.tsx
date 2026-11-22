@@ -6,7 +6,7 @@ import { PointerHalo } from "@/components/motion/pointer";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteNav } from "@/components/site-nav";
 import { themeScript } from "@/lib/theme-script";
-import { HERO_IMAGES, SITE } from "@/lib/site";
+import { SITE } from "@/lib/site";
 import "./globals.css";
 
 const newsreader = Newsreader({
@@ -41,13 +41,13 @@ export const metadata: Metadata = {
     siteName: SITE.studio,
     title: `${SITE.name} — Atelier de paysage`,
     description: SITE.description,
-    images: [{ url: HERO_IMAGES[0].src, width: 1000, height: 667, alt: HERO_IMAGES[0].alt }],
+    images: [{ url: SITE.ogImage.src, width: 1200, height: 630, alt: SITE.ogImage.alt }],
   },
   twitter: {
     card: "summary_large_image",
     title: `${SITE.name} — Atelier de paysage`,
     description: SITE.description,
-    images: [HERO_IMAGES[0].src],
+    images: [SITE.ogImage.src],
   },
   alternates: { canonical: "/" },
 };
@@ -80,7 +80,7 @@ export default function RootLayout({
       <body className="flex min-h-full flex-col">
         <a
           href="#main"
-          className="fixed top-3 left-3 z-[80] -translate-y-20 rounded-full bg-primary px-4 py-2.5 text-sm text-primary-foreground transition-transform duration-(--duration-ui) ease-out focus-visible:translate-y-[env(safe-area-inset-top)]"
+          className="fixed top-3 left-3 z-80 -translate-y-20 rounded-full bg-primary px-4 py-2.5 text-sm text-primary-foreground transition-transform duration-(--duration-ui) ease-out focus-visible:translate-y-[env(safe-area-inset-top)]"
         >
           {SITE.skipLink}
         </a>

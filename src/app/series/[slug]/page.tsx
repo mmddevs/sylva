@@ -67,7 +67,7 @@ export default async function SeriesPage({ params }: PageProps<"/series/[slug]">
                   <RevealText
                     as="h1"
                     text={s.title}
-                    className="text-balance break-words font-heading text-5xl font-normal tracking-[-0.03em] sm:text-7xl"
+                    className="text-balance wrap-break-word font-heading text-5xl font-normal tracking-[-0.03em] sm:text-7xl"
                   />
                   <Reveal delay={120}>
                     <p className="mt-6 max-w-xl font-heading text-2xl text-pretty italic text-muted-foreground">{s.summary}</p>
@@ -102,7 +102,7 @@ export default async function SeriesPage({ params }: PageProps<"/series/[slug]">
                     delay={(k % 2) * 120}
                     className={k % 3 === 0 ? "sm:col-span-2" : undefined}
                   >
-                    <div className={`relative overflow-hidden rounded-sm bg-muted ${k % 3 === 0 ? "aspect-16/9" : "aspect-4/5"}`}>
+                    <div className={`relative overflow-hidden rounded-sm bg-muted ${k % 3 === 0 ? "aspect-video" : "aspect-4/5"}`}>
                       <Image src={img.src} alt={img.alt} fill sizes={k % 3 === 0 ? "(min-width: 1152px) 1104px, 100vw" : "(min-width: 640px) 50vw, 100vw"} className="object-cover" />
                     </div>
                   </Reveal>

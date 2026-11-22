@@ -23,9 +23,9 @@ function Marquee() {
     <div
       aria-label={PRESS.marqueeLabel}
       role="region"
-      className="group relative overflow-hidden py-6 [mask-image:linear-gradient(90deg,transparent,black_12%,black_88%,transparent)]"
+      className="group relative overflow-hidden py-6 mask-[linear-gradient(90deg,transparent,black_12%,black_88%,transparent)]"
     >
-      <div className="flex w-max animate-marquee group-hover:[animation-play-state:paused] motion-reduce:w-full motion-reduce:animate-none motion-reduce:flex-wrap">
+      <div className="flex w-max animate-marquee group-hover:paused motion-reduce:w-full motion-reduce:animate-none motion-reduce:flex-wrap">
         {row(false)}
         <div className="flex motion-reduce:hidden">{row(true)}</div>
       </div>

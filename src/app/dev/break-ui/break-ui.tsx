@@ -40,7 +40,7 @@ export function BreakUi() {
       <div className="mt-20" key={state}>
         <SeriesGrid series={series} />
       </div>
-      <div className="fixed bottom-4 left-1/2 z-[90] flex -translate-x-1/2 gap-1 rounded-full border border-border bg-card p-1 font-sans text-xs text-card-foreground shadow-lift">
+      <div className="fixed bottom-4 left-1/2 z-90 flex -translate-x-1/2 gap-1 rounded-full border border-border bg-card p-1 font-sans text-xs text-card-foreground shadow-lift">
         {STATES.map((s) => (
           <button
             key={s}

@@ -14,7 +14,7 @@ export function Matiere() {
         className="max-w-3xl text-balance font-heading text-4xl font-normal tracking-[-0.02em] sm:text-6xl"
       />
       <div className="relative mt-16">
-        <Rule className="absolute top-[1.375rem] hidden md:block" delay={200} />
+        <Rule className="absolute top-5.5 hidden md:block" delay={200} />
         <ol className="grid gap-12 md:grid-cols-3 md:gap-10">
           {MATIERE.steps.map((step, i) => {
             const Icon = ICONS[step.icon];

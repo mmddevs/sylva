@@ -1146,7 +1146,7 @@ export function DitherHelixCarousel({
         aria-roledescription="carousel"
         aria-label={brand ?? "Gallery"}
         className={cn(
-          "bg-background text-foreground relative h-full min-h-[24rem] w-full",
+          "bg-background text-foreground relative h-full min-h-96 w-full",
           className,
         )}
         {...props}
@@ -1154,6 +1154,8 @@ export function DitherHelixCarousel({
         <ul className="flex h-full snap-y snap-mandatory flex-col items-center gap-3 overflow-y-auto py-[6%]">
           {items.map((entry) => (
             <li key={entry.image} className="w-[62%] shrink-0 snap-center">
+              {/* Repli sans WebGL : <img> volontaire. */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={entry.image}
                 alt={entry.title}
@@ -1172,7 +1174,7 @@ export function DitherHelixCarousel({
       aria-roledescription="carousel"
       aria-label={brand ?? "Gallery"}
       className={cn(
-        "bg-background text-foreground relative h-full min-h-[24rem] w-full overflow-hidden select-none",
+        "bg-background text-foreground relative h-full min-h-96 w-full overflow-hidden select-none",
         className,
       )}
       {...props}

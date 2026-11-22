@@ -290,6 +290,8 @@ export function TiltedGridHero({
                   }}
                 >
                   {img ? (
+                    // <img> voulue : 16 tranches 3D par tuile, chacune recadre la même image.
+                    // eslint-disable-next-line @next/next/no-img-element
                     <img
                       src={img.src}
                       alt={k === 0 ? (img.alt ?? "") : ""}

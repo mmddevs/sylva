@@ -102,7 +102,7 @@ export function PointerHalo() {
   return (
     <motion.div
       aria-hidden
-      className="pointer-events-none fixed top-0 left-0 z-[70]"
+      className="pointer-events-none fixed top-0 left-0 z-70"
       style={{ x, y }}
     >
       <div

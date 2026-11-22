@@ -5,7 +5,7 @@ import { NOT_FOUND } from "@/lib/site";
 
 export default function NotFound() {
   return (
-    <main id="main" className="mx-auto flex min-h-[100svh] w-full max-w-6xl flex-1 flex-col justify-center px-6 pt-24 pb-16">
+    <main id="main" className="mx-auto flex min-h-svh w-full max-w-6xl flex-1 flex-col justify-center px-6 pt-24 pb-16">
       <p className="hero-in font-mono text-sm tabular-nums text-muted-foreground">{NOT_FOUND.code}</p>
       <Rule className="mt-4 max-w-md bg-sun" />
       <RevealText

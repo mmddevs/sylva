@@ -9,14 +9,18 @@ export const SITE = {
   tagline: "La forêt,\nramenée à la lumière.",
   description:
     "Atelier de paysage photographique. Des séries nées d’une marche, développées lentement, imprimées sur papier baryté.",
+  /** Image de partage (Open Graph / Twitter), 1200×630, public/og.jpg. */
+  ogImage: { src: "/og.jpg", alt: "Sous-bois baigné de lumière dorée" },
   heroCta: { label: "Voir les séries", href: "/#series" },
   heroSecondary: { label: "Commander un tirage", href: "/#contact" },
   scrollCue: "Faire défiler",
   skipLink: "Aller au contenu",
 } as const;
 
-const unsplash = (id: string, w = 1600) =>
-  `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=80`;
+/* Photos Unsplash téléchargées et converties en WebP dans public/images/
+   (voir scripts/fetch-images.mjs). "sm" = 1000 px (hero, carousel). */
+const photo = (name: string, size: "full" | "sm" = "full") =>
+  `/images/${name}${size === "sm" ? "-sm" : ""}.webp`;
 
 export type Img = { src: string; alt: string };
 
@@ -38,16 +42,16 @@ export const NAV = {
 } as const;
 
 export const HERO_IMAGES: Img[] = [
-  { src: unsplash("photo-1441974231531-c6227db76b6e", 1000), alt: "Sous-bois baigné de lumière" },
-  { src: unsplash("photo-1501785888041-af3ef285b470", 1000), alt: "Lac de montagne au petit jour" },
-  { src: unsplash("photo-1418065460487-3e41a6c84dc5", 1000), alt: "Forêt dans la brume" },
-  { src: unsplash("photo-1470071459604-3b5ec3a7fe05", 1000), alt: "Collines dans le brouillard" },
-  { src: unsplash("photo-1433086966358-54859d0ed716", 1000), alt: "Cascade entre les roches" },
-  { src: unsplash("photo-1506905925346-21bda4d32df4", 1000), alt: "Montagnes au lever du jour" },
-  { src: unsplash("photo-1472214103451-9374bd1c798e", 1000), alt: "Prairie au soleil levant" },
-  { src: unsplash("photo-1448375240586-882707db888b", 1000), alt: "Sous-bois brumeux et fougères" },
-  { src: unsplash("photo-1469474968028-56623f02e42e", 1000), alt: "Montagne dans la lumière dorée" },
-  { src: unsplash("photo-1470770841072-f978cf4d019e", 1000), alt: "Maison au bord du lac" },
+  { src: photo("sous-bois-lumiere", "sm"), alt: "Sous-bois baigné de lumière" },
+  { src: photo("lac-aube", "sm"), alt: "Lac de montagne au petit jour" },
+  { src: photo("foret-brume", "sm"), alt: "Forêt dans la brume" },
+  { src: photo("collines-brouillard", "sm"), alt: "Collines dans le brouillard" },
+  { src: photo("cascade", "sm"), alt: "Cascade entre les roches" },
+  { src: photo("montagnes-aube", "sm"), alt: "Montagnes au lever du jour" },
+  { src: photo("prairie-soleil", "sm"), alt: "Prairie au soleil levant" },
+  { src: photo("sous-bois-fougeres", "sm"), alt: "Sous-bois brumeux et fougères" },
+  { src: photo("montagne-or", "sm"), alt: "Montagne dans la lumière dorée" },
+  { src: photo("maison-lac", "sm"), alt: "Maison au bord du lac" },
 ];
 
 export const WORK = {
@@ -56,14 +60,14 @@ export const WORK = {
 };
 
 export const WORK_ITEMS = [
-  { image: unsplash("photo-1501785888041-af3ef285b470", 1200), title: "Lac d’altitude" },
-  { image: unsplash("photo-1441974231531-c6227db76b6e", 1200), title: "Canopée" },
-  { image: unsplash("photo-1418065460487-3e41a6c84dc5", 1200), title: "Brume" },
-  { image: unsplash("photo-1433086966358-54859d0ed716", 1200), title: "Cascade" },
-  { image: unsplash("photo-1506905925346-21bda4d32df4", 1200), title: "Vallée" },
-  { image: unsplash("photo-1470071459604-3b5ec3a7fe05", 1200), title: "Crête" },
-  { image: unsplash("photo-1469474968028-56623f02e42e", 1200), title: "Soleil" },
-  { image: unsplash("photo-1448375240586-882707db888b", 1200), title: "Mousse" },
+  { image: photo("lac-aube", "sm"), title: "Lac d’altitude" },
+  { image: photo("sous-bois-lumiere", "sm"), title: "Canopée" },
+  { image: photo("foret-brume", "sm"), title: "Brume" },
+  { image: photo("cascade", "sm"), title: "Cascade" },
+  { image: photo("montagnes-aube", "sm"), title: "Vallée" },
+  { image: photo("collines-brouillard", "sm"), title: "Crête" },
+  { image: photo("montagne-or", "sm"), title: "Soleil" },
+  { image: photo("sous-bois-fougeres", "sm"), title: "Mousse" },
 ];
 
 /* ── Séries ─────────────────────────────────────────────────────── */
@@ -104,12 +108,12 @@ export const SERIES: Series[] = [
       "Quatorze images prises la tête renversée, d’avril à octobre, sous les mêmes chênes. Le cadre ne change pas : seule la lumière traverse.",
       "Les tirages sont faits sur un papier baryté mat qui garde la profondeur des verts sans les saturer.",
     ],
-    cover: { src: unsplash("photo-1513836279014-a89f7a76ae86"), alt: "Cimes des arbres vues depuis le sol" },
+    cover: { src: photo("cimes-vues-du-sol"), alt: "Cimes des arbres vues depuis le sol" },
     images: [
-      { src: unsplash("photo-1441974231531-c6227db76b6e"), alt: "Rayons de soleil dans un sous-bois" },
-      { src: unsplash("photo-1440581572325-0bea30075d9d"), alt: "Hêtraie au soleil rasant, sol couvert de mousse" },
-      { src: unsplash("photo-1425913397330-cf8af2ff40a1"), alt: "Pinède à contre-jour" },
-      { src: unsplash("photo-1507041957456-9c397ce39c97"), alt: "Troncs hauts dans un sous-bois sombre" },
+      { src: photo("sous-bois-lumiere"), alt: "Rayons de soleil dans un sous-bois" },
+      { src: photo("hetraie"), alt: "Hêtraie au soleil rasant, sol couvert de mousse" },
+      { src: photo("pinede-contre-jour"), alt: "Pinède à contre-jour" },
+      { src: photo("troncs-sous-bois"), alt: "Troncs hauts dans un sous-bois sombre" },
     ],
   },
   {
@@ -124,12 +128,12 @@ export const SERIES: Series[] = [
       "Neuf matins à attendre que le brouillard se pose dans les vallées. On ne voit plus que les crêtes de sapins, comme des îles.",
       "Le grain est volontairement poussé au développement : la brume devient matière.",
     ],
-    cover: { src: unsplash("photo-1542273917363-3b1817f69a2d"), alt: "Vallée boisée noyée de brouillard" },
+    cover: { src: photo("vallee-brumeuse"), alt: "Vallée boisée noyée de brouillard" },
     images: [
-      { src: unsplash("photo-1482192596544-9eb780fc7f66"), alt: "Forêt de conifères sous la brume, vue d’en haut" },
-      { src: unsplash("photo-1418065460487-3e41a6c84dc5"), alt: "Forêt dans la brume" },
-      { src: unsplash("photo-1473448912268-2022ce9509d8"), alt: "Rivière calme entre les sapins dans le brouillard" },
-      { src: unsplash("photo-1470071459604-3b5ec3a7fe05"), alt: "Collines dans le brouillard" },
+      { src: photo("coniferes-brume"), alt: "Forêt de conifères sous la brume, vue d’en haut" },
+      { src: photo("foret-brume"), alt: "Forêt dans la brume" },
+      { src: photo("riviere-sapins"), alt: "Rivière calme entre les sapins dans le brouillard" },
+      { src: photo("collines-brouillard"), alt: "Collines dans le brouillard" },
     ],
   },
   {
@@ -144,12 +148,12 @@ export const SERIES: Series[] = [
       "Douze lacs atteints à pied, photographiés dans la première heure du jour, quand l’eau tient encore le reflet.",
       "Chaque tirage porte le nom du lac et l’altitude au dos, au crayon.",
     ],
-    cover: { src: unsplash("photo-1501785888041-af3ef285b470"), alt: "Lac de montagne au petit jour" },
+    cover: { src: photo("lac-aube"), alt: "Lac de montagne au petit jour" },
     images: [
-      { src: unsplash("photo-1439853949127-fa647821eba0"), alt: "Lac glaciaire entre deux parois rocheuses" },
-      { src: unsplash("photo-1493246507139-91e8fad9978e"), alt: "Lac turquoise au pied de sommets rosis" },
-      { src: unsplash("photo-1511497584788-876760111969"), alt: "Sapins au bord d’un lac de montagne, lumière dorée" },
-      { src: unsplash("photo-1433086966358-54859d0ed716"), alt: "Cascade entre les roches" },
+      { src: photo("lac-glaciaire"), alt: "Lac glaciaire entre deux parois rocheuses" },
+      { src: photo("lac-turquoise"), alt: "Lac turquoise au pied de sommets rosis" },
+      { src: photo("sapins-lac"), alt: "Sapins au bord d’un lac de montagne, lumière dorée" },
+      { src: photo("cascade"), alt: "Cascade entre les roches" },
     ],
   },
   {
@@ -164,12 +168,12 @@ export const SERIES: Series[] = [
       "Une seule ligne d’horizon, suivie sur onze jours de marche. Le soir la teinte, l’orage l’efface.",
       "Les tirages les plus sombres sont faits en noir et blanc, sur papier chaud.",
     ],
-    cover: { src: unsplash("photo-1508739773434-c26b3d09e071"), alt: "Crête rocheuse rougie par le soleil couchant" },
+    cover: { src: photo("crete-rouge"), alt: "Crête rocheuse rougie par le soleil couchant" },
     images: [
-      { src: unsplash("photo-1506905925346-21bda4d32df4"), alt: "Montagnes au lever du jour, au-dessus des nuages" },
-      { src: unsplash("photo-1500964757637-c85e8a162699"), alt: "Crêtes en couches au coucher du soleil" },
-      { src: unsplash("photo-1454496522488-7a8e488e8606"), alt: "Sommets enneigés sous les nuages" },
-      { src: unsplash("photo-1505765050516-f72dcac9c60e"), alt: "Sommet dans les nuages, en noir et blanc" },
+      { src: photo("montagnes-aube"), alt: "Montagnes au lever du jour, au-dessus des nuages" },
+      { src: photo("cretes-couchant"), alt: "Crêtes en couches au coucher du soleil" },
+      { src: photo("sommets-enneiges"), alt: "Sommets enneigés sous les nuages" },
+      { src: photo("sommet-nuages"), alt: "Sommet dans les nuages, en noir et blanc" },
     ],
   },
   {
@@ -184,11 +188,11 @@ export const SERIES: Series[] = [
       "Huit images de plateau, à l’heure dorée. Ce qui compte ici, c’est la lumière rasante qui sculpte l’herbe.",
       "Série tirée en petit format, pour être tenue à la main.",
     ],
-    cover: { src: unsplash("photo-1472214103451-9374bd1c798e"), alt: "Prairie au soleil levant" },
+    cover: { src: photo("prairie-soleil"), alt: "Prairie au soleil levant" },
     images: [
-      { src: unsplash("photo-1502082553048-f009c37129b9"), alt: "Arbre isolé dans une prairie" },
-      { src: unsplash("photo-1465146344425-f00d5f5c8f07"), alt: "Coquelicots dans les herbes hautes" },
-      { src: unsplash("photo-1469474968028-56623f02e42e"), alt: "Montagne dans la lumière dorée" },
+      { src: photo("arbre-prairie"), alt: "Arbre isolé dans une prairie" },
+      { src: photo("coquelicots"), alt: "Coquelicots dans les herbes hautes" },
+      { src: photo("montagne-or"), alt: "Montagne dans la lumière dorée" },
     ],
   },
   {
@@ -202,10 +206,10 @@ export const SERIES: Series[] = [
     text: [
       "Six poses de plusieurs minutes, au-dessus de 2 000 mètres. Le ciel bouge, la montagne ne bouge pas.",
     ],
-    cover: { src: unsplash("photo-1519681393784-d120267933ba"), alt: "Voie lactée au-dessus de sommets enneigés" },
+    cover: { src: photo("voie-lactee"), alt: "Voie lactée au-dessus de sommets enneigés" },
     images: [
-      { src: unsplash("photo-1464822759023-fed622ff2c3b"), alt: "Vallée alpine entre sapins et sommets enneigés" },
-      { src: unsplash("photo-1426604966848-d7adac402bff"), alt: "Falaise de granit au-dessus d’une vallée boisée" },
+      { src: photo("vallee-alpine"), alt: "Vallée alpine entre sapins et sommets enneigés" },
+      { src: photo("falaise-granit"), alt: "Falaise de granit au-dessus d’une vallée boisée" },
     ],
   },
   {
@@ -219,10 +223,10 @@ export const SERIES: Series[] = [
     text: [
       "Dix images de passages : une passerelle, une route vue du ciel, un tapis de mousse. Le chemin est toujours le sujet.",
     ],
-    cover: { src: unsplash("photo-1447752875215-b2761acb3c5d"), alt: "Passerelle en bois qui entre dans la forêt" },
+    cover: { src: photo("passerelle"), alt: "Passerelle en bois qui entre dans la forêt" },
     images: [
-      { src: unsplash("photo-1476231682828-37e571bc172f"), alt: "Route sinueuse dans une forêt dense, vue du ciel" },
-      { src: unsplash("photo-1448375240586-882707db888b"), alt: "Sous-bois brumeux et fougères" },
+      { src: photo("route-foret"), alt: "Route sinueuse dans une forêt dense, vue du ciel" },
+      { src: photo("sous-bois-fougeres"), alt: "Sous-bois brumeux et fougères" },
     ],
   },
 ];
@@ -258,7 +262,7 @@ export const ATELIER = {
   text: "Sylva Atelier compose des images à partir de forêts, de lacs et de crêtes. Chaque série naît d’une marche, d’un carnet, puis d’un long travail de lumière et de grain.",
   text2:
     "Nous travaillons à deux, entre le terrain et le laboratoire. Rien n’est retouché au-delà de ce que permettrait une chambre noire.",
-  image: { src: unsplash("photo-1448375240586-882707db888b", 1400), alt: "Sous-bois brumeux, fougères au premier plan" },
+  image: { src: photo("sous-bois-fougeres"), alt: "Sous-bois brumeux, fougères au premier plan" },
 } as const;
 
 /* ── Chiffres et parcours ───────────────────────────────────────── */

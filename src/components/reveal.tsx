@@ -93,7 +93,7 @@ export function RevealText({
           return (
             <React.Fragment key={wi}>
               {wi > 0 && " "}
-              <span className="inline-block overflow-hidden pb-[0.12em] -mb-[0.12em] align-bottom">
+              <span className="inline-block overflow-hidden pb-[0.12em] mb-[-0.12em] align-bottom">
                 <span
                   className="reveal-word"
                   style={{ "--reveal-delay": `${delay + step}ms` } as React.CSSProperties}

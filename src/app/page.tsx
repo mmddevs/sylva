@@ -14,7 +14,7 @@ export default function Home() {
   return (
     <main id="main" className="flex flex-1 flex-col bg-background">
         <Hero />
-        <section id="work" aria-label={WORK.title} className="h-[100svh] min-h-[560px]">
+        <section id="work" aria-label={WORK.title} className="h-svh min-h-140">
           <LazyMount className="h-full w-full bg-background">
             <DitherHelixCarousel items={WORK_ITEMS} brand={WORK.title} className="h-full w-full" />
           </LazyMount>

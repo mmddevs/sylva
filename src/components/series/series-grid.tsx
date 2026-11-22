@@ -33,7 +33,7 @@ export function SeriesGrid({ series }: { series: Series[] }) {
       <div
         role="group"
         aria-label={SERIES_SECTION.filterLabel}
-        className="-mx-6 flex snap-x gap-2 overflow-x-auto overscroll-x-contain px-6 pb-2 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0"
+        className="-mx-6 flex snap-x gap-2 overflow-x-auto overscroll-x-contain px-6 pb-2 scrollbar-none sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0"
       >
         {options.map((o) => {
           const active = filter === o.id;

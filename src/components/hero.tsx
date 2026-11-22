@@ -28,7 +28,7 @@ export function Hero() {
       images={HERO_IMAGES}
       axis={60}
       tileHeight={24}
-      className="h-[100svh] min-h-[600px] w-full bg-background"
+      className="h-svh min-h-150 w-full bg-background"
     >
       <div className="scroll-exit relative z-10 mx-auto flex h-full w-full max-w-6xl flex-col items-center justify-between px-6 pt-[calc(5.5rem+env(safe-area-inset-top))] pb-[max(2rem,env(safe-area-inset-bottom))] text-center">
         <h1 className="max-w-4xl text-balance font-heading text-[clamp(2.75rem,8vw,6rem)] leading-[0.95] font-normal tracking-[-0.03em] text-foreground">

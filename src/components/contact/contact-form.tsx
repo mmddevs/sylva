@@ -203,7 +203,7 @@ export function ContactForm() {
                 name="subject"
                 value={values.subject}
                 onChange={(e) => update("subject", e.target.value)}
-                className={cn(fieldClass, "h-12 appearance-none bg-[length:1rem] bg-[right_1rem_center] bg-no-repeat pr-10")}
+                className={cn(fieldClass, "h-12 appearance-none bg-size-[1rem] bg-position-[right_1rem_center] bg-no-repeat pr-10")}
                 style={{
                   backgroundImage:
                     "linear-gradient(45deg, transparent 50%, currentColor 50%), linear-gradient(135deg, currentColor 50%, transparent 50%)",
@@ -234,7 +234,7 @@ export function ContactForm() {
               />
             </Field>
             {/* Piège à robots : hors écran, hors tabulation. */}
-            <div aria-hidden className="absolute -left-[9999px] h-px w-px overflow-hidden">
+            <div aria-hidden className="absolute left-[-9999px] h-px w-px overflow-hidden">
               <label htmlFor="website">Site web</label>
               <input id="website" name="website" tabIndex={-1} autoComplete="off" />
             </div>

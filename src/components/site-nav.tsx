@@ -100,7 +100,7 @@ export function SiteNav() {
                       <motion.span
                         layoutId="nav-active"
                         aria-hidden
-                        className="absolute bottom-1.5 left-1/2 -ml-[3px] size-1.5 rounded-full bg-sun"
+                        className="absolute bottom-1.5 left-1/2 -ml-0.75 size-1.5 rounded-full bg-sun"
                         transition={{ type: "spring", duration: 0.45, bounce: 0.15 }}
                       />
                     )}
@@ -130,12 +130,12 @@ export function SiteNav() {
               <Menu aria-hidden className="size-5" />
             </Dialog.Trigger>
             <Dialog.Portal>
-              <Dialog.Backdrop className="fixed inset-0 z-50 bg-foreground/20 transition-opacity duration-500 ease-(--ease-drawer) data-ending-style:opacity-0 data-starting-style:opacity-0 motion-reduce:duration-150" />
+              <Dialog.Backdrop className="fixed inset-0 z-50 bg-foreground/20 transition-opacity duration-500 ease-drawer data-ending-style:opacity-0 data-starting-style:opacity-0 motion-reduce:duration-150" />
               <Dialog.Popup
                 className={cn(
-                  "fixed inset-x-0 top-0 z-50 flex max-h-[100svh] flex-col overflow-y-auto rounded-b-2xl border-b border-border bg-background",
+                  "fixed inset-x-0 top-0 z-50 flex max-h-svh flex-col overflow-y-auto rounded-b-2xl border-b border-border bg-background",
                   "pt-[env(safe-area-inset-top)] pb-[max(1.5rem,env(safe-area-inset-bottom))] shadow-lift outline-none",
-                  "transition-[translate,opacity] duration-500 ease-(--ease-drawer)",
+                  "transition-[translate,opacity] duration-500 ease-drawer",
                   "data-starting-style:-translate-y-full data-ending-style:-translate-y-full",
                   "motion-reduce:duration-150 motion-reduce:data-starting-style:translate-y-0 motion-reduce:data-starting-style:opacity-0 motion-reduce:data-ending-style:translate-y-0 motion-reduce:data-ending-style:opacity-0",
                 )}

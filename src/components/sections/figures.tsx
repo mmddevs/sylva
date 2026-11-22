@@ -28,11 +28,11 @@ export function Figures() {
           <h3 className="font-heading text-2xl italic">{FIGURES.timelineTitle}</h3>
           <ol className="relative">
             {/* La ligne se dessine au fil du scroll (scroll-driven, scaleY). */}
-            <span aria-hidden className="absolute top-2 bottom-2 left-[0.3125rem] w-px bg-border" />
-            <span aria-hidden className="scroll-draw-y absolute top-2 bottom-2 left-[0.3125rem] w-px bg-sun" />
+            <span aria-hidden className="absolute top-2 bottom-2 left-1.25 w-px bg-border" />
+            <span aria-hidden className="scroll-draw-y absolute top-2 bottom-2 left-1.25 w-px bg-sun" />
             {FIGURES.timeline.map((step, i) => (
               <Reveal as="li" key={step.year} delay={i * 100} className="relative grid gap-1 pb-10 pl-10 last:pb-0 sm:grid-cols-[6rem_1fr] sm:gap-6">
-                <span aria-hidden className="absolute top-1.5 left-0 size-[0.6875rem] rounded-full border-2 border-sun bg-background" />
+                <span aria-hidden className="absolute top-1.5 left-0 size-2.75 rounded-full border-2 border-sun bg-background" />
                 <span className="font-mono text-sm tabular-nums text-muted-foreground">{step.year}</span>
                 <p className="max-w-xl text-pretty">{step.text}</p>
               </Reveal>

@@ -24,7 +24,7 @@ export function SiteFooter() {
           backToTopLabel={FOOTER.backToTop}
         />
       ) : (
-        <div aria-hidden className="h-[560px] bg-background" />
+        <div aria-hidden className="h-140 bg-background" />
       )}
     </div>
   );

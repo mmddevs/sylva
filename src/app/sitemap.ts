@@ -8,7 +8,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: `${SITE.url}/series/${s.slug}`,
       changeFrequency: "yearly" as const,
       priority: 0.7,
-      images: [s.cover.src],
+      images: [`${SITE.url}${s.cover.src}`],
     })),
   ];
 }

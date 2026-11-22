@@ -14,9 +14,9 @@ export function AppToaster() {
       toastOptions={{
         classNames: {
           toast:
-            "!rounded-lg !border !border-border !bg-card !text-card-foreground !shadow-lift !font-sans",
-          description: "!text-muted-foreground",
-          icon: "!text-primary",
+            "rounded-lg! border! border-border! bg-card! text-card-foreground! shadow-lift! font-sans!",
+          description: "text-muted-foreground!",
+          icon: "text-primary!",
         },
       }}
     />

@@ -10,6 +10,8 @@ Langue du site et des textes : **français** (espaces insécables avant ? ! : ; 
 - `npm run dev` : serveur de dev (l'utilisateur le lance lui-même ; ne le laisse pas tourner en fond après tes tests)
 - `npx tsc --noEmit` et `npx eslint src` : à passer avant de dire que c'est fini
 - `npx next build` : vérification finale
+- `node scripts/canonical-classes.mjs` : liste les classes Tailwind non canoniques (jaunes dans VS Code) ; `--write` les corrige. Doit afficher « 0 suggestion(s) ».
+- `.vscode/settings.json` : `*.css` en mode `tailwindcss` et `css.lint.unknownAtRules: ignore` (sinon `@theme`, `@custom-variant`, `@apply` ressortent en jaune).
 - `/dev/break-ui?data=demo|worst|empty|one` : données extrêmes (dev seulement, 404 en prod)
 
 ## Thème « Passe-partout » (voir [DESIGN.md](DESIGN.md))
@@ -31,7 +33,8 @@ Langue du site et des textes : **français** (espaces insécables avant ? ! : ; 
 ## Contenu et images
 
 - Textes, listes, URLs : [src/lib/site.ts](src/lib/site.ts) (`SITE`, `NAV`, `HERO_IMAGES`, `WORK_ITEMS`, `SERIES`, `CATEGORIES`, `ATELIER`, `FIGURES`, `MATIERE`, `PRESS`, `FAQ`, `CONTACT`, `FOOTER*`, `NOT_FOUND`). Validation du formulaire : [src/lib/contact.ts](src/lib/contact.ts), Server Action simulée : [src/app/actions.ts](src/app/actions.ts) (`#echec` dans le message simule une erreur serveur).
-- Images : Unsplash via `unsplash(id, w)`. **Vérifie qu'un ID répond 200** (`curl -I`) avant de l'utiliser. `next/image` partout sauf dans les composants fournis.
+- Images : **locales**, en WebP dans `public/images/` (`<nom>.webp` 1600 px, `<nom>-sm.webp` 1000 px pour hero et carousel), référencées par `photo("nom", "sm")` dans `site.ts`. Pour en ajouter : une ligne dans [scripts/fetch-images.mjs](scripts/fetch-images.mjs) (vérifier que l'ID Unsplash répond 200), puis `node scripts/fetch-images.mjs <nom>`. Image de partage : `public/og.jpg` (1200×630, `SITE.ogImage`). `next/image` partout sauf dans les composants fournis.
+- **Classes Tailwind canoniques** (l'extension VS Code les signale en jaune) : `z-70` et non `z-[70]`, `h-svh`, `max-w-136`, `rounded-lg!` (le `!` à la fin), `aspect-video`… En cas de doute, écrire la valeur arbitraire puis laisser le quick-fix de l'extension, ou lancer `node scripts/canonical-classes.mjs --write`.
 
 ## Composants fournis (à modifier avec précaution)
 
@@ -39,7 +42,7 @@ Langue du site et des textes : **français** (espaces insécables avant ? ! : ; 
 - `dither-helix-carousel.tsx` : carousel WebGL **fini** qui rend la molette à la page (`MIN`/`MAX`, `atEnd`). Ne pas rétablir la boucle infinie. Se met en pause hors écran / onglet caché ; monté à l'approche via [LazyMount](src/components/lazy-mount.tsx).
 - `halftone-wordmark-footer.tsx` : footer canvas, palette fournie par [SiteFooter](src/components/site-footer.tsx) depuis le thème ; prop `backToTopLabel` ajoutée.
 
-Les `<img>` brutes dans ces composants sont voulues (avertissements ESLint `no-img-element` acceptés).
+Les `<img>` brutes dans ces composants sont voulues : l'avertissement ESLint `no-img-element` y est désactivé ligne par ligne, avec la raison.
 
 ## Next.js
 
